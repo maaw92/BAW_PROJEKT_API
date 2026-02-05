@@ -21,7 +21,7 @@ namespace Core_Api_Test.Controllers
 
         [HttpGet("get")]        
         public IActionResult GetMovies()
-        {
+        {            
             var movies = _db.MovieEvents.Select(e => new {e.Id, e.Name, e.Date}).ToList();
             return Ok(movies);
         }
@@ -52,6 +52,22 @@ namespace Core_Api_Test.Controllers
             _db.SaveChanges();
             return Ok("Zarezerwowano miejsce.");
         }
+        [HttpPost("create")]
+        public IActionResult CreateEvent([FromBody] CreateMovieRequest request)
+        {
+            MovieEvent ev = new MovieEvent() { Name = request.MovieName, Date = request.MovieDate,
+                Seats = new List<Seat>() {
+                    new Seat() { IsReserved = false, SeatNumber = "A1"},
+                    new Seat() { IsReserved = false, SeatNumber = "A2"},
+                    new Seat() { IsReserved = false, SeatNumber = "A3"},
+                    new Seat() { IsReserved = false, SeatNumber = "A4"},
+                    new Seat() { IsReserved = false, SeatNumber = "A5"},
+                }
+            };
+            _db.MovieEvents.Add(ev);
+            _db.SaveChanges();
+            return Ok("Utworzono zdarzenie.");
+        }
         private List<Claim> GetUserClaims()
         {
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
@@ -63,6 +79,6 @@ namespace Core_Api_Test.Controllers
             return jwt.Claims.ToList();
 
         }
-
     }
+
 }
